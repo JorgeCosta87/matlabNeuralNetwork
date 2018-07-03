@@ -1,4 +1,4 @@
-%initNN:
+%configNNTrain:
 % initialize and Config the architecture of the neural netork
 %  
 %INPUT:
@@ -24,4 +24,3 @@ function net = configNNTrain(net, trainFcn, divideFcn, trainRatio, valRatio, tes
         net.divideParam.testRatio    = testRatio;
     end
 end
-

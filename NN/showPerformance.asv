@@ -1,17 +1,10 @@
-function showPerformance(net, simOutput, inputs, targets, tr)
+function [perf accuracyPred accuracyTrain] = showPerformance(net, simOutput, inputs, targets, tr)
 
     plotconfusion(targets, simOutput) % Matriz de confusao
-
     plotperf(tr)         % Grafico com o desempenho da rede nos 3 conjuntos          
-    perf = perform(net,targets, simOutput) 
+  
 
-     simOutput = round(simOutput);
- 
- x = size(simOutput);
- k = 0;
-
- sprintf('sizeof x = %d , k = %d, % =  ', x(2), k  )
- k*100/x(2) 
+    %simOutput = round(simOutput);
 
     %Calcula e mostra a percentagem de classificacoes corretas no total dos exemplos
     r=0;
@@ -24,9 +17,11 @@ function showPerformance(net, simOutput, inputs, targets, tr)
       end
     end
 
-    accuracy = r/size(simOutput,2)*100;
-    fprintf('Precisao total %f\n', accuracy)
+    accuracyPred = r/size(simOutput,2)*100;
 
+    
+    disp(size(inputs));
+    disp(size(tr.testInd));
 
     % SIMULAR A REDE APENAS NO CONJUNTO DE TESTE
     TInput = inputs(:, tr.testInd);
@@ -43,6 +38,16 @@ function showPerformance(net, simOutput, inputs, targets, tr)
           r = r+1;
       end
     end
-    accuracy = r/size(tr.testInd,2)*100;
-    fprintf('Precisao teste %f\n', accuracy)
+    accuracyTrain = r/size(tr.testInd,2)*100;
+
+  
+    
+    ERR = simOutput - targets;
+    err = mse(ERR);
+    disp(err)
+    
+    fprintf('pref 1 %f\n', perf)
+    fprintf('accuracy pred 1 %f\n', accuracyPred)
+    fprintf('accuracy test 1 %f\n', accuracyTrain)
+    
 end

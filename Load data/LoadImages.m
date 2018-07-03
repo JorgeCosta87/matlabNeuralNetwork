@@ -49,7 +49,7 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
 %             h_gaussian = fspecial('gaussian', 3, 0.5);
 %             merge = imfilter(merge, h_gaussian);
         %median filter
-        merge = medfilt2(merge);
+        %merge = medfilt2(merge);
             
         %edge presevation 
             %merge = imguidedfilter(merge);

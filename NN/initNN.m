@@ -23,4 +23,3 @@ function net = initNN(layersFCN, layersSize)
     net = init(net);
 
 end
-
