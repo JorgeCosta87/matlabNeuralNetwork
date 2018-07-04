@@ -1,4 +1,4 @@
-function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVector)
+function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVector, uniqueSpeciesAndSubSpeciesVector)
     
     % Get the name of all images on directory
     imagesOnDir = dir([path '\*.jpg']);
@@ -108,20 +108,33 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
         % define the species name
         imagesOnDir(i).leafSpeciesName = specieAndLeafType(1);
         
-        imagesToReturn(add).leafSpeciesName = imagesOnDir(i).leafSpeciesName;
-        imagesToReturn(add).leafType        = imagesOnDir(i).leafType;
+        %imagesToReturn(add).leafSpeciesName = imagesOnDir(i).leafSpeciesName;
+        %imagesToReturn(add).leafType        = imagesOnDir(i).leafType;
+        %imagesToReturn(add).binData         = imagesOnDir(i).binData;
+        %imagesToReturn(add).leafFullName    = imagesOnDir(i).leafFullName;
+        %imagesToReturn(add).id              = imagesOnDir(i).id;
+		
+		imagesToReturn(add).leafSpecies     = imagesOnDir(i).leafSpeciesName;
+        imagesToReturn(add).leafSubSpecies  = imagesOnDir(i).leafType;
         imagesToReturn(add).binData         = imagesOnDir(i).binData;
         imagesToReturn(add).leafFullName    = imagesOnDir(i).leafFullName;
         imagesToReturn(add).id              = imagesOnDir(i).id;
+        
+        imagesToReturn(add).leaf_specie_subspecie = strcat(imagesToReturn(add).leafSpecies, '_', imagesToReturn(add).leafSubSpecies);
+		
+		
         add = add + 1;
     end
     
 %     uniqueSpecies = unique([imagesToReturn.leafSpeciesName]);
 %     size(imagesToReturn)
 %     add
-    for i = 1 : (add - 1)
-        imagesToReturn(i).speciesId = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpeciesName));
+  %  for i = 1 : (add - 1)
+   %     imagesToReturn(i).speciesId = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpeciesName));
+   % end
+     for i = 1 : (add - 1)
+        imagesToReturn(i).speciesId = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpecies));
+        imagesToReturn(i).subSpeciesId = find(strcmp(uniqueSpeciesAndSubSpeciesVector, imagesToReturn(i).leaf_specie_subspecie)); 
     end
-    
     
   %  disp( count);
