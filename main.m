@@ -6,6 +6,11 @@ loadImageSet3 = true;
 
 pathToXls = '.\DataSet\ClassificaccaoFolhas.xlsx';
 
+%estes dados têm de existir na main, e não faz sentido tar a carregar a mesma informação 3 vezes dentro do loadDataSets;
+
+uniqueSpecies = uniqueSpeciesInVector(leafNames); 
+uniqueSpeciesAndSubSpecies = uniqueSubSpeciesInVector(leafNames); 
+
 if loadImageSet1
     imgSet = loadDataSets('.\DataSet\Folhas_1', pathToXls, 1, 'A2:B991');
     divide = false;
@@ -16,6 +21,7 @@ end
 
 dataInput  = [imgSet.binData]; 
 dataTarget = [imgSet.speciesId];
+%dataTarget = [imgSet.leaf_specie_subspecie];
 dataTargetBin = targetToBinary (dataTarget);
 
 if loadImageSet3
