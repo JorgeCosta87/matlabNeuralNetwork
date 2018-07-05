@@ -2,7 +2,7 @@
 % initialize and Config the architecture of the neural netork
 %  
 %INPUT:
-%   [layersFCN] - activation functions
+%   [layersFCN] - transfer functions
 %   [layersSize] - hidden layers neurons
 %
 %OUTPUT: 
