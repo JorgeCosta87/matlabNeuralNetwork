@@ -73,7 +73,7 @@ dataTargetBin = targetToBinary (dataTarget);
 pathToXlsExp = '.\nnTestParms.xlsx';
 
 sheetNum = 1;
-xlsRange = 'A2:M31';
+xlsRange = 'A2:K31';
 
 disp('Loading the XLS');
 [num, text, raw] = xlsread(pathToXlsExp, sheetNum, xlsRange);
@@ -104,10 +104,7 @@ for i = 1 : numExps
           layerSize(3)    = raw{i,9};
     end
 
-    trainFcn = raw{i,10};
-    epochs   = raw{i,11};
-    lr       = raw{i,12};
-    mc       = raw{i,13};
+    epochs = raw{i,}
 
 
     
@@ -125,7 +122,7 @@ for i = 1 : numExps
             if divide == true
                 net = configNNTrain(net, 'trainbfg', 'dividerand', 0.70, 0.15, 0.15);
             else
-                net = configNNTrain(net, trainFcn, '', 0, 0, 0);
+                net = configNNTrain(net, 'traingdx', '', 0, 0, 0);
             end
 
             %Config performance function
@@ -136,14 +133,14 @@ for i = 1 : numExps
            % disp(net.adaptFcn)
            
             %config advance parms
-            net.trainParam.epochs         = epochs;
+            net.trainParam.epochs         = 5000;
             net.trainParam.goal           = 0;
-            net.trainParam.lr             = lr; % Learning rate % good results 0.0001;
+            net.trainParam.lr             = 0.01; % Learning rate % good results 0.0001;
             net.trainParam.lr_inc         = 1.05;   %1.05 Ratio to increase learning rate
             net.trainParam.lr_dec         = 0.7;    %0.7 Ratio to decrease learning rate
             net.trainParam.max_fail       = 1000000;
             net.trainParam.max_perf_inc   = 1.04;   % 1.04 Maximum performance increase
-            net.trainParam.mc             = mc;
+            net.trainParam.mc             = 0.7;
             net.trainParam.min_grad       = 1e-200;
             net.trainParam.show           = 25;
             net.trainParam.showCommandLine= false; 

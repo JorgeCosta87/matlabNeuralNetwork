@@ -16,7 +16,7 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
         imagesOnDir(i).binData = imread(fullfile(path, imagesOnDir(i).name));
         
         % Conver the image to black and white
-        imagesOnDir(i).binData = imbinarize(imagesOnDir(i).binData, 0.5);
+        imagesOnDir(i).binData = im2bw(imagesOnDir(i).binData, 0.5);
         
         % Transform the file name into leaf Id, numeric
         auxLeafId = strsplit(imagesOnDir(i).name, '.');
@@ -30,34 +30,7 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
         merge = zeros(87);
         imagesOnDir(i).binData = imresize(imagesOnDir(i).binData,0.05) ;
         [y, x] = size(imagesOnDir(i).binData);
-        
         merge(1:y, 1:x) = imagesOnDir(i).binData;
-        
-        % testing image processing
-
-%         startX = round((87/2)-(x/2));
-%         startY = round((87/2)-(y/2));
-%         
-%         merge(startY: startY + y  - 1, startX: startX + x - 1) = imagesOnDir(i).binData;
-        
-        
-        %averaging filter
-%             h_average = fspecial('average',3);
-%             merge = imfilter(merge, h_average);
-            
-        %gaussian filter
-%             h_gaussian = fspecial('gaussian', 3, 0.5);
-%             merge = imfilter(merge, h_gaussian);
-        %median filter
-        %merge = medfilt2(merge);
-            
-        %edge presevation 
-            %merge = imguidedfilter(merge);
-
-        % END testing image processing
-        
-       
-        
         
         if( ( x > 87 ) || y > 87)
            disp(i) 
@@ -65,9 +38,29 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
          
         imagesOnDir(i).binData = merge;  
         
+        [B,~] = bwboundaries(imagesOnDir(i).binData,'noholes'); 
+        B = B{1,1};
+       
+        
+        aux = regionprops(imagesOnDir(i).binData, 'Perimeter', 'Area', 'Orientation');
+        imagesOnDir(i).orientation  = round(abs(aux.Orientation));
+        imagesOnDir(i).Area         = round(aux.Area);
+        imagesOnDir(i).Perimeter    = round( aux.Perimeter);
+        imagesOnDir(i).width        = max(B(:,1)) - min(B(:,1));
+        imagesOnDir(i).height       = max(B(:,2)) - min(B(:,2));
+        imagesOnDir(i).avgBoarderX  = round(mean(B(:,1)));
+        imagesOnDir(i).avgBoarderY  = round( mean(B(:,2)));
+        
+        points = detectHarrisFeatures(imagesOnDir(i).binData);
+        imagesOnDir(i).corners = points.Count;
+        
         % convert matrix to vector
         imagesOnDir(i).binData = imagesOnDir(i).binData(:);
        
+        
+        
+        
+        
         
         %  pause(20);
         %  return;
@@ -108,33 +101,41 @@ function imagesToReturn = LoadImages(path, idsInput, namesInput, uniqueSpeciesVe
         % define the species name
         imagesOnDir(i).leafSpeciesName = specieAndLeafType(1);
         
-        %imagesToReturn(add).leafSpeciesName = imagesOnDir(i).leafSpeciesName;
-        %imagesToReturn(add).leafType        = imagesOnDir(i).leafType;
-        %imagesToReturn(add).binData         = imagesOnDir(i).binData;
-        %imagesToReturn(add).leafFullName    = imagesOnDir(i).leafFullName;
-        %imagesToReturn(add).id              = imagesOnDir(i).id;
-		
-		imagesToReturn(add).leafSpecies     = imagesOnDir(i).leafSpeciesName;
+        imagesToReturn(add).leafSpecies     = imagesOnDir(i).leafSpeciesName;
         imagesToReturn(add).leafSubSpecies  = imagesOnDir(i).leafType;
         imagesToReturn(add).binData         = imagesOnDir(i).binData;
         imagesToReturn(add).leafFullName    = imagesOnDir(i).leafFullName;
         imagesToReturn(add).id              = imagesOnDir(i).id;
         
         imagesToReturn(add).leaf_specie_subspecie = strcat(imagesToReturn(add).leafSpecies, '_', imagesToReturn(add).leafSubSpecies);
-		
-		
+         
+       
+       
+        imagesToReturn(add).orientation = imagesOnDir(i).orientation    ;  
+        imagesToReturn(add).Area        = imagesOnDir(i).Area           ;
+        imagesToReturn(add).Perimeter   = imagesOnDir(i).Perimeter      ;
+        imagesToReturn(add).width       = imagesOnDir(i).width          ;
+        imagesToReturn(add).height      = imagesOnDir(i).height         ;
+        imagesToReturn(add).avgBoarderX = imagesOnDir(i).avgBoarderX    ;
+        imagesToReturn(add).avgBoarderY = imagesOnDir(i).avgBoarderY    ;
+        imagesToReturn(add).corners     = imagesOnDir(i).corners        ;
+        
+        imagesToReturn(add).charcAsVec = [imagesToReturn(add).orientation, imagesToReturn(add).Area ,...
+            imagesToReturn(add).Perimeter, imagesToReturn(add).width, imagesToReturn(add).height, ...
+            imagesToReturn(add).avgBoarderX , imagesToReturn(add).avgBoarderY , imagesToReturn(add).corners ];
+        
+        imagesToReturn(add).charcAsVec = imagesToReturn(add).charcAsVec';
+        
         add = add + 1;
     end
     
 %     uniqueSpecies = unique([imagesToReturn.leafSpeciesName]);
 %     size(imagesToReturn)
 %     add
-  %  for i = 1 : (add - 1)
-   %     imagesToReturn(i).speciesId = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpeciesName));
-   % end
-     for i = 1 : (add - 1)
-        imagesToReturn(i).speciesId = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpecies));
+    for i = 1 : (add - 1)
+        imagesToReturn(i).speciesId    = find(strcmp(uniqueSpeciesVector, imagesToReturn(i).leafSpecies));
         imagesToReturn(i).subSpeciesId = find(strcmp(uniqueSpeciesAndSubSpeciesVector, imagesToReturn(i).leaf_specie_subspecie)); 
     end
+    
     
   %  disp( count);
