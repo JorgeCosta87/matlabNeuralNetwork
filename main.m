@@ -70,10 +70,10 @@ dataTargetBin = targetToBinary (dataTarget);
 
 %LOAD exp parms
 
-pathToXlsExp = '.\nnTestParms.xlsx';
+pathToXlsExp = '.\nnTestParms_2.xlsx';
 
 sheetNum = 1;
-xlsRange = 'A2:M31';
+xlsRange = 'A2:O78';
 
 disp('Loading the XLS');
 [num, text, raw] = xlsread(pathToXlsExp, sheetNum, xlsRange);
@@ -94,20 +94,28 @@ for i = 1 : numExps
     if~isnan(raw{i,5})
         layerSize(2)    = raw{i,5};
     end
-    if ~isnan(raw{i,6})
+    if~isnan(raw{i,6})
         layerFnc(3) = raw{i,6};
+    end
+    
+    if  ~isnan(raw{i,7})
         layerSize(3)    = raw{i,7};
     end
     
     if~isnan(raw{i,8})
-          layerFnc(4) = raw{i,8};
-          layerSize(3)    = raw{i,9};
+      layerFnc(4) = raw{i,8};
+    end
+    
+    if~isnan(raw{i,9})
+          layerSize(4)    = raw{i,9};
     end
 
     trainFcn = raw{i,10};
     epochs   = raw{i,11};
     lr       = raw{i,12};
     mc       = raw{i,13};
+    sigma    = raw{i,14};
+    lambda   = raw{i,15};
 
 
     
@@ -123,7 +131,7 @@ for i = 1 : numExps
             net = initNN(layerFnc, layerSize);
 
             if divide == true
-                net = configNNTrain(net, 'trainbfg', 'dividerand', 0.70, 0.15, 0.15);
+                net = configNNTrain(net, trainFcn, 'dividerand', 0.70, 0.15, 0.15);
             else
                 net = configNNTrain(net, trainFcn, '', 0, 0, 0);
             end
@@ -149,6 +157,8 @@ for i = 1 : numExps
             net.trainParam.showCommandLine= false; 
             net.trainParam.showWindow     = true;
             net.trainParam.time           = inf;
+            net.trainParam.sigma          = sigma; % 5.0e-5
+            net.trainParam.lambda         = lambda; % 5.0e-7
            
         end
 
