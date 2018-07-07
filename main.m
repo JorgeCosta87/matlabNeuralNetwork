@@ -4,7 +4,7 @@
 loadImageSet1 = true;
 loadImageSet2 = false;
 loadImageSet3 = false;
-species = false;         %species(true) or supspcieces(false)
+species = true;         %species(true) or supspcieces(false)
 loadNN = false;
 imageFeatures = false;
 
@@ -67,10 +67,10 @@ dataTargetBin = targetToBinary (dataTarget);
 
 %LOAD exp parms
 
-pathToXlsExp = '.\nnTestParms_3.xlsx';
+pathToXlsExp = '.\nnTestParms_4_a.xlsx';
 
 sheetNum = 1;
-xlsRange = 'A2:O67';
+xlsRange = 'A2:O63';
 
 disp('Loading the XLS');
 [num, text, raw] = xlsread(pathToXlsExp, sheetNum, xlsRange);
@@ -143,11 +143,11 @@ for i = 1 : numExps
             %config advance parms
             net.trainParam.epochs            = epochs;
             net.trainParam.goal             = 0;
-            net.trainParam.lr               = str2double(lr); % Learning rate % good results 0.0001;
+            net.trainParam.lr               =lr; % Learning rate % good results 0.0001;
             net.trainParam.lr_inc            = 1.05;   %1.05 Ratio to increase learning rate
             net.trainParam.lr_dec            = 0.7;    %0.7 Ratio to decrease learning rate
             net.trainParam.max_fail          = 10000000;
-            net.trainParam.mc                = str2double(mc);
+            net.trainParam.mc                = mc;
             net.trainParam.min_grad         = 1e-200;
             net.trainParam.show             = 25;
             net.trainParam.showCommandLine  = false; 
@@ -167,7 +167,20 @@ for i = 1 : numExps
         simOut = sim(net, dataInput);
 
         % Show and save net performance results
-        showPerformance(net, simOut, filename, reportN, numRep, dataInput, dataTargetBin, tr, true, dataSetName, expType,  i, j);
+        showPerformance(net, simOut, filename, reportN, numRep, dataInput,...
+        dataTargetBin, tr, true, dataSetName, expType,  i, j);
+    
+       % confusionNum = ['confusion', num2str(reportN)];
+        idConf = [num2str(reportN),'_', num2str(i),'_' num2str(j)]; 
+        
+        confusionDiagFilename = ['Results\Confusion\',idConf, '_confusion_diag','.xlsx'];
+        confusionMatrixFilename = ['Results\Confusion\',idConf,'_confusion_matrix', '.xlsx'];
+    
+        [confusionvalue, confusionMatrix, ind, perf] = confusion(dataTargetBin,simOut);
+        confusionDiag = diag(confusionMatrix);
+
+        xlswrite(confusionDiagFilename,confusionDiag);
+        xlswrite(confusionMatrixFilename,confusionMatrix);
     end
 end
 
