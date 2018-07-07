@@ -52,7 +52,7 @@ sheetNum = 1;
     xlswrite(filename,data,sheetNum,cellRange);
     firstCol1 = 'R';
     lastCol1 = 'AD';
-cellRange = [firstCol1,firstRow,':', lastCol1, firstRow];
+    cellRange = [firstCol1,firstRow,':', lastCol1, firstRow];
     
     xlswrite(filename,data1,sheetNum,cellRange);
     % csvwrite('filename', cell2mat(data),firstRow,0)

@@ -1,10 +1,10 @@
 
 
 
-loadImageSet1 = true;
-loadImageSet2 = false;
+loadImageSet1 = false;
+loadImageSet2 = true;
 loadImageSet3 = false;
-species = true;         %species(true) or supspcieces(false)
+species = false;         %species(true) or supspcieces(false)
 loadNN = false;
 imageFeatures = false;
 
