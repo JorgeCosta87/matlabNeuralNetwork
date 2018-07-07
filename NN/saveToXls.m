@@ -9,8 +9,13 @@ function [id] = saveToXls(net, tr, filename, reportN, numRep, expid, exprep, dat
             'Layer3Size','Layer3Fcn','Layer4Size','Layer4Fnc','trainFcn',...
             'lr','lr_inc','lr_dec','mc','divideFcn','trainRatio','trainVal',...
             'testRatio','num_epochs','best_epoch','time','best_perf','best_vperf','best_tperf','accuracyPred','accuracyTest'}; 
-    
-        xlswrite(filename,col_header);
+        firstRow =  '1';
+        lastRow = '1';
+        firstCol = 'A';
+        lastCol = 'AF';
+        cellRange = [firstCol,firstRow,':', lastCol, lastRow];%[firstCol,num2str(firstRow),':',lastCol,num2str(lastRow)]
+        sheetNum = 1;
+        xlswrite(filename,col_header,sheetNum,cellRange );
     end
 
     numL = net.numLayers;
@@ -28,8 +33,16 @@ function [id] = saveToXls(net, tr, filename, reportN, numRep, expid, exprep, dat
             tr.num_epochs, tr.best_epoch, (tr.time(tr.num_epochs)*1000), tr.best_perf, tr.best_vperf, tr.best_tperf,...
             accuracyPred, accuracyTest];
         
-    disp(['A', num2str((((expid-1) * numRep)) + exprep + 1)])
-    xlswrite(filename,data,1,['A', num2str((expid * numRep) + exprep)]);
+    disp(['A', num2str((((expid-1) * numRep)) + exprep + 1)]);
+    
+firstRow =  num2str(((expid-1) * numRep) + exprep + 1);
+lastRow = 5;
+firstCol = 'A';
+lastCol = 'AF';
+cellRange = [firstCol,firstRow,':', lastCol, firstRow]%[firstCol,num2str(firstRow),':',lastCol,num2str(lastRow)]
+sheetNum = 1;
+disp(filename);
+    xlswrite(filename,data,sheetNum,cellRange);
 
     function val = checkLayerFcn(net, index)
 
