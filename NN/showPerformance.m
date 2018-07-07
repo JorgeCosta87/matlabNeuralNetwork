@@ -49,7 +49,7 @@ function showPerformance(net, simOutput, filename, reportN, numRep, inputs, targ
         perf_test = perform(net, TTargets, outTest); 
     end
     
-   [id] = saveToXls(net, tr, filename, reportN, numRep, expid, exprep, dataSetName, size(inputs,2), expType, targets, accuracyPred, accuracyTrain)
+   [id] = saveToXls(net, tr, filename, reportN, numRep, expid, exprep, dataSetName, size(inputs,2), expType, targets, accuracyPred, accuracyTrain);
 
     graphName = [id, num2str(reportN)];
     filename = ['Results\',graphName, '.png'];
@@ -84,18 +84,18 @@ function showPerformance(net, simOutput, filename, reportN, numRep, inputs, targ
         close(gcf);
     end
     
-    plotroc(targets, simOutput)
-    graphName = [num2str(reportN), '_',id,'_roc_train'];
-    filename = ['Results\Graphs\',graphName, '.png'];
-    saveas(gcf,filename);
-    close(gcf);
-    if  ~isnan(err_test)
-        plotroc(TTargets, outTest)
-        graphName = [num2str(reportN), '_',id,'_roc_test'];
-        filename = ['Results\Graphs\',graphName, '.png'];
-        saveas(gcf,filename);
-        close(gcf);
-    end
+%     plotroc(targets, simOutput)
+%     graphName = [num2str(reportN), '_',id,'_roc_train'];
+%     filename = ['Results\Graphs\',graphName, '.png'];
+%     saveas(gcf,filename);
+%     close(gcf);
+%     if  ~isnan(err_test)
+%         plotroc(TTargets, outTest)
+%         graphName = [num2str(reportN), '_',id,'_roc_test'];
+%         filename = ['Results\Graphs\',graphName, '.png'];
+%         saveas(gcf,filename);
+%         close(gcf);
+%     end
         
     fprintf('\nResults:\n');
     fprintf('\tperformance %f\n', perf)

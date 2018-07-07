@@ -1,10 +1,10 @@
 
 
 
-loadImageSet1 = true;
-loadImageSet2 = false;
+loadImageSet1 = false;
+loadImageSet2 = true;
 loadImageSet3 = false;
-species = true;         %species(true) or supspcieces(false)
+species = false;         %species(true) or supspcieces(false)
 loadNN = false;
 imageFeatures = false;
 
@@ -22,11 +22,8 @@ for i = 1 : maxReports
          reportN = reportN + 1;         
          reportName = ['report', num2str(reportN)];
          filename = ['Results\',reportName, '.xlsx'];
-         break;
     end
 end
-
-
 
 id = 1;
 dataSetName = '';
@@ -70,17 +67,17 @@ dataTargetBin = targetToBinary (dataTarget);
 
 %LOAD exp parms
 
-pathToXlsExp = '.\nnTestParms_2.xlsx';
+pathToXlsExp = '.\nnTestParms_4_a.xlsx';
 
 sheetNum = 1;
-xlsRange = 'A2:O78';
+xlsRange = 'A2:O63';
 
 disp('Loading the XLS');
 [num, text, raw] = xlsread(pathToXlsExp, sheetNum, xlsRange);
 
 
 numExps = size(raw,1);
-numRep  = 3;
+numRep  = 2;
 layerFnc = "";
 layerSize = 10;
 
@@ -144,21 +141,21 @@ for i = 1 : numExps
            % disp(net.adaptFcn)
            
             %config advance parms
-            net.trainParam.epochs         = epochs;
-            net.trainParam.goal           = 0;
-            net.trainParam.lr             = lr; % Learning rate % good results 0.0001;
-            net.trainParam.lr_inc         = 1.05;   %1.05 Ratio to increase learning rate
-            net.trainParam.lr_dec         = 0.7;    %0.7 Ratio to decrease learning rate
-            net.trainParam.max_fail       = 1000000;
-            net.trainParam.max_perf_inc   = 1.04;   % 1.04 Maximum performance increase
-            net.trainParam.mc             = mc;
-            net.trainParam.min_grad       = 1e-200;
-            net.trainParam.show           = 25;
-            net.trainParam.showCommandLine= false; 
-            net.trainParam.showWindow     = true;
-            net.trainParam.time           = inf;
-            net.trainParam.sigma          = sigma; % 5.0e-5
-            net.trainParam.lambda         = lambda; % 5.0e-7
+            net.trainParam.epochs            = epochs;
+            net.trainParam.goal             = 0;
+            net.trainParam.lr               =lr; % Learning rate % good results 0.0001;
+            net.trainParam.lr_inc            = 1.05;   %1.05 Ratio to increase learning rate
+            net.trainParam.lr_dec            = 0.7;    %0.7 Ratio to decrease learning rate
+            net.trainParam.max_fail          = 10000000;
+            net.trainParam.mc                = mc;
+            net.trainParam.min_grad         = 1e-200;
+            net.trainParam.show             = 25;
+            net.trainParam.showCommandLine  = false; 
+            net.trainParam.showWindow       = true;
+             
+            net.trainParam.time             = inf;
+            net.trainParam.sigma            = 5.0e-5; str2double(sigma); % 5.0e-5
+            net.trainParam.lambda           = 5.0e-7; str2double(lambda); % 5.0e-7
            
         end
 
@@ -170,7 +167,20 @@ for i = 1 : numExps
         simOut = sim(net, dataInput);
 
         % Show and save net performance results
-        showPerformance(net, simOut, filename, reportN, numRep, dataInput, dataTargetBin, tr, true, dataSetName, expType,  i, j);
+        showPerformance(net, simOut, filename, reportN, numRep, dataInput,...
+        dataTargetBin, tr, true, dataSetName, expType,  i, j);
+    
+       % confusionNum = ['confusion', num2str(reportN)];
+        idConf = [num2str(reportN),'_', num2str(i),'_' num2str(j)]; 
+        
+        confusionDiagFilename = ['Results\Confusion\',idConf, '_confusion_diag','.xlsx'];
+        confusionMatrixFilename = ['Results\Confusion\',idConf,'_confusion_matrix', '.xlsx'];
+    
+        [confusionvalue, confusionMatrix, ind, perf] = confusion(dataTargetBin,simOut);
+        confusionDiag = diag(confusionMatrix);
+
+        xlswrite(confusionDiagFilename,confusionDiag);
+        xlswrite(confusionMatrixFilename,confusionMatrix);
     end
 end
 
