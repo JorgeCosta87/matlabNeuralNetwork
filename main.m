@@ -4,9 +4,9 @@
 loadImageSet1 = false;
 loadImageSet2 = true;
 loadImageSet3 = false;
-species = false;         %species(true) or supspcieces(false)
+species = true;         %species(true) or supspcieces(false)
 loadNN = false;
-imageFeatures = false;
+imageFeatures = true;
 
 
 %uniqueSpecies = uniqueSpeciesInVector(leafNames); 
@@ -44,6 +44,7 @@ if loadImageSet3
     imgSet = loadDataSets('.\DataSet\Folhas_3', pathToXls, 1, 'A2:B991');
     dataSetName = 'Folhas_3';
     divide = false;
+    loadNN = true;
     
     %dataTargetBin_3 = targetToBinary(dataTarget);
 end
@@ -67,17 +68,17 @@ dataTargetBin = targetToBinary (dataTarget);
 
 %LOAD exp parms
 
-pathToXlsExp = '.\nnTestParms_4_a.xlsx';
+pathToXlsExp = '.\nnTestParms_c_1_final.xlsx';
 
 sheetNum = 1;
-xlsRange = 'A2:O63';
+xlsRange = 'A2:O2';
 
 disp('Loading the XLS');
 [num, text, raw] = xlsread(pathToXlsExp, sheetNum, xlsRange);
 
 
 numExps = size(raw,1);
-numRep  = 2;
+numRep  = 1;
 layerFnc = "";
 layerSize = 10;
 
@@ -115,14 +116,19 @@ for i = 1 : numExps
     lambda   = raw{i,15};
 
 
-    
+    if loadNN
+            
+            fprintf('\n******Testing data set 3*******\n');
+            simOut = sim(net, dataInput);
+            showPerformance(net, simOut, dataInput, dataTargetBin, tr, false, dataSetName);
+    else
+        
     for j = 1 : numRep
     
         %********************* init and configure network ************************
 
-        if loadNN
-            
-        else
+        
+        
             %Configure net architecture
             %{'logsig', 'tansig'}
             net = initNN(layerFnc, layerSize);
@@ -157,12 +163,12 @@ for i = 1 : numExps
             net.trainParam.sigma            = 5.0e-5; str2double(sigma); % 5.0e-5
             net.trainParam.lambda           = 5.0e-7; str2double(lambda); % 5.0e-7
            
-        end
+       
 
         %train the network
         [net,tr] = train(net, dataInput, dataTargetBin);
         %view(net);
-        
+      
         % simulation
         simOut = sim(net, dataInput);
 
@@ -181,11 +187,8 @@ for i = 1 : numExps
 
         xlswrite(confusionDiagFilename,confusionDiag);
         xlswrite(confusionMatrixFilename,confusionMatrix);
+        
+        end
     end
 end
 
-if loadImageSet3
-    fprintf('\n******Testing data set 3*******\n');
-    simOut = sim(net, dataInput_3);
-    showPerformance(net, simOut, dataInput_3, dataTargetBin_3, tr, false, dataSetName);
-end

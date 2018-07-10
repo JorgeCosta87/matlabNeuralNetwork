@@ -9,13 +9,8 @@ h_average = fspecial('average',3);
 %generate a gaussian filter
 h_gaussian = fspecial('gaussian', 3, 0.5);
 
-
-
-
  A_bin = imbinarize(A, 0.5);
 merge = zeros(120);
-
-
 
 A_bin_resize = imresize(A_bin,0.10) ;
 [y, x] = size(A_bin_resize);
@@ -27,11 +22,12 @@ merge(startY: startY + y - 1, startX: + startX + x  - 1) = A_bin_resize;
 % ((87/2)-(x/2))
 imshow(merge);
 
+merge = A;
+
 A_average = imfilter(merge, h_average);
 A_gaussian = imfilter(merge, h_gaussian);
 A_median = medfilt2(merge);
 A_guided_filter = imguidedfilter(merge);
-
 
 subplot(2,3,1), imshow(merge), title('Original');
 
